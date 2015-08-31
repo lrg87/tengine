@@ -64,8 +64,6 @@ static void ngx_http_upstream_upgraded_read_downstream(ngx_http_request_t *r);
 static void ngx_http_upstream_upgraded_write_downstream(ngx_http_request_t *r);
 static void ngx_http_upstream_upgraded_read_upstream(ngx_http_request_t *r,
     ngx_http_upstream_t *u);
-static void ngx_http_upstream_upgraded_write_upstream(ngx_http_request_t *r,
-    ngx_http_upstream_t *u);
 static void ngx_http_upstream_process_upgraded(ngx_http_request_t *r,
     ngx_uint_t from_upstream, ngx_uint_t do_write);
 static void
@@ -1137,6 +1135,8 @@ ngx_http_upstream_check_broken_connection(ngx_http_request_t *r,
         }
 
         if (!u->cacheable && u->peer.connection) {
+            /* Send abort request to peer */
+            u->abort_request(r);
             ngx_log_error(NGX_LOG_INFO, ev->log, ev->kq_errno,
                           "kevent() reported that client prematurely closed "
                           "connection, so upstream connection is closed too");
@@ -1186,6 +1186,8 @@ ngx_http_upstream_check_broken_connection(ngx_http_request_t *r,
         }
 
         if (!u->cacheable && u->peer.connection) {
+            /* Send abort request to peer */
+            u->abort_request(r);
             ngx_log_error(NGX_LOG_INFO, ev->log, err,
                         "epoll_wait() reported that client prematurely closed "
                         "connection, so upstream connection is closed too");
@@ -3027,7 +3029,7 @@ ngx_http_upstream_upgraded_read_upstream(ngx_http_request_t *r,
 }
 
 
-static void
+void
 ngx_http_upstream_upgraded_write_upstream(ngx_http_request_t *r,
     ngx_http_upstream_t *u)
 {
