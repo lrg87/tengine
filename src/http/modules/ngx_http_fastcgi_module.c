@@ -263,6 +263,13 @@ static ngx_command_t  ngx_http_fastcgi_commands[] = {
       offsetof(ngx_http_fastcgi_loc_conf_t, upstream.ignore_client_abort),
       NULL },
 
+    { ngx_string("fastcgi_send_user_abort"),
+      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_FLAG,
+      ngx_conf_set_flag_slot,
+      NGX_HTTP_LOC_CONF_OFFSET,
+      offsetof(ngx_http_fastcgi_loc_conf_t, upstream.send_user_abort),
+      NULL },
+
     { ngx_string("fastcgi_bind"),
       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
       ngx_http_upstream_bind_set_slot,
@@ -2547,9 +2554,9 @@ ngx_http_fastcgi_abort_request_real(ngx_http_request_t *r)
 static void
 ngx_http_fastcgi_abort_request(ngx_http_request_t *r)
 {
-    ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
-                   "abort http fastcgi request start...");
-    ngx_http_fastcgi_abort_request_real(r);
+    if (r->upstream->conf->send_user_abort) {
+        ngx_http_fastcgi_abort_request_real(r);
+    }
     ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
                    "abort http fastcgi request");
 
@@ -2619,6 +2626,7 @@ ngx_http_fastcgi_create_loc_conf(ngx_conf_t *cf)
     conf->upstream.request_buffering = NGX_CONF_UNSET;
     conf->upstream.buffering = NGX_CONF_UNSET;
     conf->upstream.ignore_client_abort = NGX_CONF_UNSET;
+    conf->upstream.send_user_abort = NGX_CONF_UNSET;
 
     conf->upstream.local = NGX_CONF_UNSET_PTR;
 
@@ -2700,6 +2708,9 @@ ngx_http_fastcgi_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
 
     ngx_conf_merge_value(conf->upstream.ignore_client_abort,
                               prev->upstream.ignore_client_abort, 0);
+
+    ngx_conf_merge_value(conf->upstream.send_user_abort,
+                              prev->upstream.send_user_abort, 0);
 
     ngx_conf_merge_ptr_value(conf->upstream.local,
                               prev->upstream.local, NULL);
