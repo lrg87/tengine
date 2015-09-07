@@ -2555,8 +2555,6 @@ static void
 ngx_http_fastcgi_abort_request(ngx_http_request_t *r)
 {
     if (r->upstream->conf->send_user_abort) {
-        ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
-                       "abort http fastcgi request start...");
         ngx_http_fastcgi_abort_request_real(r);
     }
     ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
