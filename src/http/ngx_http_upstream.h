@@ -179,6 +179,7 @@ typedef struct {
     ngx_flag_t                       pass_request_body;
 
     ngx_flag_t                       ignore_client_abort;
+    ngx_flag_t                       send_user_abort;
     ngx_flag_t                       intercept_errors;
     ngx_flag_t                       cyclic_temp_file;
 
