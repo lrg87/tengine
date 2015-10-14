@@ -1,0 +1,11 @@
+tengine (2.1.1-3) unstable; urgency=low
+
+  * Send fastcgi abort request message to nginx peer when user aborts
+
+ -- root <betterpm@gmail.com>  Mon, 31 Aug 2015 12:43:35 +0800
+
+tengine (2.1.1-2) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- root <betterpm@gmail.com>  Fri, 07 Feb 2014 12:43:35 +0800
