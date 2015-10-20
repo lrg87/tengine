@@ -1,0 +1,8 @@
+/opt/sbin
+/opt/etc/nginx/conf.d
+/opt/share/nginx
+/opt/share/nginx/html
+/data/cache/nginx
+/data/log/nginx
+/opt/run/
+/opt/include/nginx
